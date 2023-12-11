@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:todoflutter/screen/addToDo.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:todoflutter/screen/readtodo.dart';
 
-void main() {
+Future<void> main() async {
   runApp(const MainApp());
 }
 
@@ -11,8 +11,6 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: ReadToDo()
-    );
+    return const MaterialApp(home: ReadToDo());
   }
 }
