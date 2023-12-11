@@ -29,7 +29,23 @@ class _ReadToDoState extends State<ReadToDo> {
         title: const Text("To Do"),
       ),
       body: Center(
-        child: Text("Nothing"),
+        child: Column(children: [Card(
+          child: ListTile(
+            leading: Checkbox(
+              value: false,
+              onChanged: (bool? value) {},
+            ),
+            title: Container(
+              width: 300,
+              height: 100,
+              padding: const EdgeInsets.all(8.0),
+              color: Colors.green,
+              child: Center(
+                child: Text("Test"),
+              ),
+            ),
+          ),
+        ),],)
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
