@@ -27,11 +27,12 @@ class _AddToDOState extends State<AddToDO> {
     print(data.get(0));
   }
 
-  Future<void> addData(String id, String topic) async {
+  Future<void> addData(String id, String topic,bool isfinish) async {
     var data = Hive.box('data');
     data.put(id, {
       'id': id,
       'topic': topic,
+      'isfinish':isfinish
     });
   }
 
@@ -62,6 +63,7 @@ class _AddToDOState extends State<AddToDO> {
         allData.add(ToDo(
           value['id'],
           value['topic'],
+          true
         ));
       }
     }
@@ -135,8 +137,8 @@ class _AddToDOState extends State<AddToDO> {
 
           String enteredText = topicController.text;
           print("Entered Text: $enteredText");
-          ToDo todo = ToDo(id, enteredText);
-          addData(todo.id, enteredText);
+          ToDo todo = ToDo(id, enteredText,true);
+          addData(todo.id, enteredText,true);
           // getDataReturn();
           // getDataById('ee068d29-d1f0-469d-8d57-0d0fecc9dfe2');
           // getData();
