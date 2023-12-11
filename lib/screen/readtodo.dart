@@ -47,11 +47,8 @@ class _ReadToDoState extends State<ReadToDo> {
         if (value != null) {
           print("ID: ${value['id']}");
           print("Topic: ${value['topic']}");
-          allData.add(ToDo(
-            value['id'],
-            value['topic'],
-            bool.parse(value['isfinish'].toString())
-          ));
+          allData.add(ToDo(value['id'], value['topic'],
+              bool.parse(value['isfinish'].toString())));
         }
       }
 
@@ -81,11 +78,11 @@ class _ReadToDoState extends State<ReadToDo> {
               List<Widget> cards = snapshot.data!.map((todo) {
                 return Card(
                   child: ListTile(
-                   leading: Checkbox(
+                    leading: Checkbox(
                       value: todo.isfinish,
                       onChanged: (bool? value) {
                         setState(() {
-                          value = false;
+                          todo.isfinish = !todo.isfinish;
                         });
                       },
                     ),
