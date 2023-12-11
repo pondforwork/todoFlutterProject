@@ -52,13 +52,16 @@ class _AddToDOState extends State<AddToDO> {
     for (dynamic value in values) {
       // Check if value is not null to avoid errors if the box is empty
       if (value != null) {
+        // Access all properties of the value and print them
+        print("ID: ${value['id']}");
+        print("Topic: ${value['topic']}");
+        // Add the object to the list
         allData.add(ToDo(
           value['id'],
           value['topic'],
         ));
       }
     }
-  
     return allData;
   }
 
