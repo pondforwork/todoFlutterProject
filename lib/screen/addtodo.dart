@@ -24,18 +24,59 @@ class _AddToDOState extends State<AddToDO> {
     print(data.get(0));
   }
 
-  Future<void> addData(
-      String id, String topic, bool finish, bool archive) async {
+  Future<void> addData(String id, String topic) async {
     var data = Hive.box('data');
-    data.put(
-        id, {'id': id, 'topic': topic, 'finish': finish, 'archive': archive});
+    data.put(id, {
+      'id': id,
+      'topic': topic,
+    });
   }
 
-  Future<void> getData() async {
+  // Future<void> getData() async {
+  //   var data = Hive.box('data');
+  //   var allData = data.values.toList();
+  //   print(allData);
+  //   var allData2 =
+  //       data.toMap(); // This returns a Map containing keys and values.
+  //   allData2.forEach((key, value) {
+  //     print('Key: $key, Value: $value');
+  //   });
+  // }
+
+  Future<List<ToDo>> getData() async {
     var data = Hive.box('data');
-    var allData = data.values.toList();
-    print(allData);
+    // Get the list of values
+    List<dynamic> values = data.values.toList();
+    // Convert each value to a ToDo object
+    List<ToDo> allData = [];
+    for (dynamic value in values) {
+      // Check if value is not null to avoid errors if the box is empty
+      if (value != null) {
+        allData.add(ToDo(
+          value['id'],
+          value['topic'],
+        ));
+      }
+    }
+  
+    return allData;
   }
+
+  // Future<List<ToDo>> getDataReturn() async {
+  //   var data = Hive.box('data');
+  //   List<ToDo> allData = [];
+  //   for (var key in data.keys) {
+  //     var todoData = data.get(key);
+  //     if (todoData != null) {
+  //       allData.add(
+  //           ToDo(todoData['id'].toString(), todoData['topic'], true, true));
+  //     }
+  //   }
+  //   allData.forEach((todo) => print(todo));
+
+  //   print(allData[0].toString());
+  //   return allData;
+  // }
 
   Future<void> clearData() async {
     var data = Hive.box('data');
@@ -84,13 +125,15 @@ class _AddToDOState extends State<AddToDO> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          String enteredText = topicController.text;
-          // print("Entered Text: $enteredText");
-          // ToDo todo = ToDo(enteredText, false, false);
-          // addData(todo.id, enteredText, todo.finish, todo.archive);
-          // getData();
-          getDataById('ee068d29-d1f0-469d-8d57-0d0fecc9dfe2');
+          String id = Uuid().v4();
 
+          String enteredText = topicController.text;
+          print("Entered Text: $enteredText");
+          ToDo todo = ToDo(id, enteredText);
+          // addData(todo.id, enteredText);
+          // getDataReturn();
+          // getDataById('ee068d29-d1f0-469d-8d57-0d0fecc9dfe2');
+          getData();
           // clearData();
         },
         child: const Icon(Icons.add),
