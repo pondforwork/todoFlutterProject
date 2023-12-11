@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:todoflutter/model/todo.dart';
+import 'package:uuid/uuid.dart';
 
 class AddToDO extends StatefulWidget {
   const AddToDO({super.key});
@@ -23,15 +24,17 @@ class _AddToDOState extends State<AddToDO> {
     print(data.get(0));
   }
 
-  Future<void> addData(String topic, bool finish, bool archive) async {
+  Future<void> addData(int id, String topic, bool finish, bool archive) async {
     var data = Hive.box('data');
-    data.put(0, {'topic': topic, 'finish': finish, 'archive': archive});
+    data.put(id, {'topic': topic, 'finish': finish, 'archive': archive});
   }
 
   Future<void> getData() async {
     var data = Hive.box('data');
-
-    print(data.get(0));
+    
+    var allData =
+        data.values.toList(); //\ Convert iterable to list for easier handling
+    print(allData);
   }
 
   var topicController = TextEditingController();
@@ -64,11 +67,13 @@ class _AddToDOState extends State<AddToDO> {
         onPressed: () {
           String enteredText = topicController.text;
           print("Entered Text: $enteredText");
-          ToDo todo = new ToDo(enteredText, false, false);
-          addData(todo.topic, todo.finish, todo.archive);
+          ToDo todo = ToDo(0, enteredText, false, false);
+          // addData(0, todo.topic, todo.finish, todo.archive);
+          // addData(1, "Test2", todo.finish, todo.archive);
+
           getData();
         },
-        child: Icon(Icons.add),
+        child: const Icon(Icons.add),
       ),
     );
   }
