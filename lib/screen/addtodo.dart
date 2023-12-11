@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:todoflutter/model/todo.dart';
 
 class AddToDO extends StatefulWidget {
@@ -9,6 +10,30 @@ class AddToDO extends StatefulWidget {
 }
 
 class _AddToDOState extends State<AddToDO> {
+  @override
+  void initState() {
+    super.initState();
+    initHive();
+  }
+
+  Future<void> initHive() async {
+    await Hive.initFlutter();
+    await Hive.openBox('data');
+    var data = Hive.box('data');
+    print(data.get(0));
+  }
+
+  Future<void> addData(String topic, bool finish, bool archive) async {
+    var data = Hive.box('data');
+    data.put(0, {'topic': topic, 'finish': finish, 'archive': archive});
+  }
+
+  Future<void> getData() async {
+    var data = Hive.box('data');
+
+    print(data.get(0));
+  }
+
   var topicController = TextEditingController();
   @override
   Widget build(BuildContext context) {
@@ -40,6 +65,8 @@ class _AddToDOState extends State<AddToDO> {
           String enteredText = topicController.text;
           print("Entered Text: $enteredText");
           ToDo todo = new ToDo(enteredText, false, false);
+          addData(todo.topic, todo.finish, todo.archive);
+          getData();
         },
         child: Icon(Icons.add),
       ),
