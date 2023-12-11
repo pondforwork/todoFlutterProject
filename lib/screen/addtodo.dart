@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:todoflutter/model/todo.dart';
 import 'package:uuid/uuid.dart';
+import 'package:path_provider/path_provider.dart';
 
 class AddToDO extends StatefulWidget {
   const AddToDO({super.key});
@@ -11,6 +12,7 @@ class AddToDO extends StatefulWidget {
 }
 
 class _AddToDOState extends State<AddToDO> {
+  // Hive.init(documentDirectory.path);
   @override
   void initState() {
     super.initState();
@@ -18,7 +20,8 @@ class _AddToDOState extends State<AddToDO> {
   }
 
   Future<void> initHive() async {
-    await Hive.initFlutter();
+    final documentDirectory = await getApplicationDocumentsDirectory();
+    await Hive.initFlutter(documentDirectory.path);
     await Hive.openBox('data');
     var data = Hive.box('data');
     print(data.get(0));
@@ -133,10 +136,10 @@ class _AddToDOState extends State<AddToDO> {
           String enteredText = topicController.text;
           print("Entered Text: $enteredText");
           ToDo todo = ToDo(id, enteredText);
-          // addData(todo.id, enteredText);
+          addData(todo.id, enteredText);
           // getDataReturn();
           // getDataById('ee068d29-d1f0-469d-8d57-0d0fecc9dfe2');
-          getData();
+          // getData();
           // clearData();
         },
         child: const Icon(Icons.add),
