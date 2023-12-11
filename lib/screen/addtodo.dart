@@ -24,17 +24,36 @@ class _AddToDOState extends State<AddToDO> {
     print(data.get(0));
   }
 
-  Future<void> addData(int id, String topic, bool finish, bool archive) async {
+  Future<void> addData(
+      String id, String topic, bool finish, bool archive) async {
     var data = Hive.box('data');
-    data.put(id, {'topic': topic, 'finish': finish, 'archive': archive});
+    data.put(
+        id, {'id': id, 'topic': topic, 'finish': finish, 'archive': archive});
   }
 
   Future<void> getData() async {
     var data = Hive.box('data');
-    
-    var allData =
-        data.values.toList(); //\ Convert iterable to list for easier handling
+    var allData = data.values.toList();
     print(allData);
+  }
+
+  Future<void> clearData() async {
+    var data = Hive.box('data');
+    await data.clear();
+    print('Data cleared successfully');
+  }
+
+  Future<Map<String, dynamic>> getDataById(String id) async {
+    var data = Hive.box('data');
+    var todoData = data.get(id);
+
+    if (todoData != null) {
+      print('ToDo with ID $id: $todoData');
+      return {'id': id, ...todoData};
+    } else {
+      print('ToDo with ID $id not found');
+      return {}; // Return an empty map or handle it accordingly
+    }
   }
 
   var topicController = TextEditingController();
@@ -66,12 +85,13 @@ class _AddToDOState extends State<AddToDO> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           String enteredText = topicController.text;
-          print("Entered Text: $enteredText");
-          ToDo todo = ToDo(0, enteredText, false, false);
-          // addData(0, todo.topic, todo.finish, todo.archive);
-          // addData(1, "Test2", todo.finish, todo.archive);
+          // print("Entered Text: $enteredText");
+          // ToDo todo = ToDo(enteredText, false, false);
+          // addData(todo.id, enteredText, todo.finish, todo.archive);
+          // getData();
+          getDataById('ee068d29-d1f0-469d-8d57-0d0fecc9dfe2');
 
-          getData();
+          // clearData();
         },
         child: const Icon(Icons.add),
       ),
