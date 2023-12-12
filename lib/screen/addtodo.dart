@@ -12,36 +12,25 @@ class AddToDO extends StatefulWidget {
 }
 
 class _AddToDOState extends State<AddToDO> {
+  late int selectedColorIndex = 0; // Track the selected color index
   // Hive.init(documentDirectory.path);
   @override
   void initState() {
     super.initState();
     initHive();
+    // selectedColorIndex = 0;
   }
 
   Future<void> initHive() async {
     final documentDirectory = await getApplicationDocumentsDirectory();
     await Hive.initFlutter(documentDirectory.path);
     await Hive.openBox('data');
-    var data = Hive.box('data');
-    print(data.get(0));
   }
 
   Future<void> addData(String id, String topic, bool isfinish) async {
     var data = Hive.box('data');
     data.put(id, {'id': id, 'topic': topic, 'isfinish': isfinish});
   }
-
-  // Future<void> getData() async {
-  //   var data = Hive.box('data');
-  //   var allData = data.values.toList();
-  //   print(allData);
-  //   var allData2 =
-  //       data.toMap(); // This returns a Map containing keys and values.
-  //   allData2.forEach((key, value) {
-  //     print('Key: $key, Value: $value');
-  //   });
-  // }
 
   Future<List<ToDo>> getData() async {
     var data = Hive.box('data');
@@ -99,30 +88,106 @@ class _AddToDOState extends State<AddToDO> {
   }
 
   var topicController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text("To Do"),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: Center(
-          child: Form(
-            child: TextFormField(
-              controller: topicController,
-              decoration: const InputDecoration(
-                labelText: "What Things To Do ?",
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Center(
+              child: Form(
+                child: TextFormField(
+                  controller: topicController,
+                  decoration: const InputDecoration(
+                    labelText: "What Things To Do ?",
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please Enter Your To Do';
+                    }
+                    return null;
+                  },
+                ),
               ),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please Enter Your To Do';
-                }
-                return null;
-              },
             ),
           ),
-        ),
+          ToggleButtons(
+            onPressed: (int index) {
+              setState(() {
+                selectedColorIndex = index;
+              });
+            },
+            isSelected:
+                List.generate(3, (index) => index == selectedColorIndex),
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: ClipOval(
+                  child: Material(
+                    color: Colors.red,
+                    borderRadius: BorderRadius.circular(1000),
+                    child: InkWell(
+                      onTap: () {
+                        setState(() {
+                          selectedColorIndex = 0;
+                        });
+                      },
+                      child: Container(
+                        width: 50,
+                        height: 50,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: ClipOval(
+                  child: Material(
+                    color: Colors.green,
+                    borderRadius: BorderRadius.circular(1000),
+                    child: InkWell(
+                      onTap: () {
+                        setState(() {
+                          selectedColorIndex = 1;
+                        });
+                      },
+                      child: Container(
+                        width: 50,
+                        height: 50,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: ClipOval(
+                  child: Material(
+                    color: Colors.lightGreen,
+                    borderRadius: BorderRadius.circular(1000),
+                    child: InkWell(
+                      onTap: () {
+                        setState(() {
+                          selectedColorIndex = 2; 
+                        });
+                      },
+                      child: Container(
+                        width: 50,
+                        height: 50,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
