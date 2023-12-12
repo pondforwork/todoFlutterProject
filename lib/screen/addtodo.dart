@@ -27,13 +27,9 @@ class _AddToDOState extends State<AddToDO> {
     print(data.get(0));
   }
 
-  Future<void> addData(String id, String topic,bool isfinish) async {
+  Future<void> addData(String id, String topic, bool isfinish) async {
     var data = Hive.box('data');
-    data.put(id, {
-      'id': id,
-      'topic': topic,
-      'isfinish':isfinish
-    });
+    data.put(id, {'id': id, 'topic': topic, 'isfinish': isfinish});
   }
 
   // Future<void> getData() async {
@@ -60,11 +56,8 @@ class _AddToDOState extends State<AddToDO> {
         print("ID: ${value['id']}");
         print("Topic: ${value['topic']}");
         // Add the object to the list
-        allData.add(ToDo(
-          value['id'],
-          value['topic'],
-          true
-        ));
+        allData.add(ToDo(value['id'], value['topic'],
+            bool.parse(value['isfinish'].toString())));
       }
     }
     return allData;
@@ -133,12 +126,11 @@ class _AddToDOState extends State<AddToDO> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          String id = Uuid().v4();
-
+          String id = const Uuid().v4();
           String enteredText = topicController.text;
           print("Entered Text: $enteredText");
-          ToDo todo = ToDo(id, enteredText,true);
-          addData(todo.id, enteredText,true);
+          ToDo todo = ToDo(id, enteredText, false);
+          addData(todo.id, todo.topic, todo.isfinish);
           // getDataReturn();
           // getDataById('ee068d29-d1f0-469d-8d57-0d0fecc9dfe2');
           // getData();

@@ -60,6 +60,12 @@ class _ReadToDoState extends State<ReadToDo> {
     }
   }
 
+  Future<void> clearData() async {
+    var data = Hive.box('data');
+    await data.clear();
+    print('Data cleared successfully');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -71,10 +77,16 @@ class _ReadToDoState extends State<ReadToDo> {
           future: _data,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return CircularProgressIndicator();
+              return const CircularProgressIndicator();
             } else if (snapshot.hasError) {
               return Text('Error: ${snapshot.error}');
+            } else if (snapshot.data?.length == 0) {
+              print("null");
+              return const Center(
+                child: Text("There's No ToDo Here"),
+              );
             } else {
+              print(snapshot.data.toString());
               List<Widget> cards = snapshot.data!.map((todo) {
                 return Card(
                   child: ListTile(
