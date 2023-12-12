@@ -105,6 +105,21 @@ class _ReadToDoState extends State<ReadToDo> {
     }
   }
 
+  Future<void> addOrUpdateData(String id, String topic, bool isfinish) async {
+    var data = Hive.box('data');
+
+    // Check if the ID already exists
+    if (data.containsKey(id)) {
+      // Update only the isfinish field
+      data.put(id, {'id': id, 'topic': topic, 'isfinish': isfinish});
+      print('Data updated successfully for ID: $id');
+    } else {
+      // Add new data if the ID doesn't exist
+      data.put(id, {'id': id, 'topic': topic, 'isfinish': isfinish});
+      print('Data added successfully for ID: $id');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -130,7 +145,8 @@ class _ReadToDoState extends State<ReadToDo> {
                 return Card(
                   child: GestureDetector(
                     onLongPress: () {
-                      _showDeleteDialog(todo.id);
+                      print(todo.id);
+                      // _showDeleteDialog(todo.id);
                     },
                     child: ListTile(
                       leading: Checkbox(
@@ -138,6 +154,14 @@ class _ReadToDoState extends State<ReadToDo> {
                         onChanged: (bool? value) {
                           setState(() {
                             todo.isfinish = !todo.isfinish;
+                          });
+                          Future.delayed(Duration(seconds: 2), () {
+                            print("2Sec");
+                            setState(() {
+                              addOrUpdateData(
+                                  todo.id, todo.topic, todo.isfinish);
+                              _data = getData();
+                            });
                           });
                         },
                       ),
@@ -164,6 +188,8 @@ class _ReadToDoState extends State<ReadToDo> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
+          // clearData();
+
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => const AddToDO()),
