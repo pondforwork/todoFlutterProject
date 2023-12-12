@@ -123,8 +123,11 @@ class _ReadToDoState extends State<ReadToDo> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("To Do"),
+        title: const Text("To Do",style: TextStyle(color: Colors.black),),
+        backgroundColor: Colors.yellow[600],
       ),
+        backgroundColor: Colors.yellow[200],
+
       body: Center(
         child: FutureBuilder<List<ToDo>>(
           future: _data,
@@ -141,36 +144,46 @@ class _ReadToDoState extends State<ReadToDo> {
             } else {
               print(snapshot.data.toString());
               List<Widget> cards = snapshot.data!.map((todo) {
-                return Card(
-                  child: GestureDetector(
-                    onLongPress: () {
-                      print(todo.id);
-                      _showDeleteDialog(todo.id);
-                    },
-                    child: ListTile(
-                      leading: Checkbox(
-                        value: todo.isfinish,
-                        onChanged: (bool? value) {
-                          setState(() {
-                            todo.isfinish = !todo.isfinish;
-                          });
-                          Future.delayed(Duration(seconds: 2), () {
-                            print("2Sec");
-                            setState(() {
-                              addOrUpdateData(
-                                  todo.id, todo.topic, todo.isfinish);
-                              _data = getData();
-                            });
-                          });
-                        },
-                      ),
-                      title: Container(
-                        width: 300,
-                        height: 100,
-                        padding: const EdgeInsets.all(8.0),
-                        color: Colors.green,
-                        child: Center(
-                          child: Text(todo.topic),
+                return Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Card(
+                    child: GestureDetector(
+                      onLongPress: () {
+                        print(todo.id);
+                        _showDeleteDialog(todo.id);
+                      },
+                      child: ListTile(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(
+                              10.0), // Replace 10.0 with your desired corner radius
+                        ),
+                        tileColor: Colors.white,
+                        leading: Container(
+                          color: Colors.white,
+                          child: Checkbox(
+                            value: todo.isfinish,
+                            onChanged: (bool? value) {
+                              setState(() {
+                                todo.isfinish = !todo.isfinish;
+                              });
+                              Future.delayed(Duration(seconds: 2), () {
+                                print("2Sec");
+                                setState(() {
+                                  addOrUpdateData(
+                                      todo.id, todo.topic, todo.isfinish);
+                                  _data = getData();
+                                });
+                              });
+                            },
+                          ),
+                        ),
+                        title: Container(
+                          width: 300,
+                          height: 70,
+                          padding: const EdgeInsets.all(8.0),
+                          child: Center(
+                            child: Text(todo.topic),
+                          ),
                         ),
                       ),
                     ),
@@ -194,7 +207,7 @@ class _ReadToDoState extends State<ReadToDo> {
             MaterialPageRoute(builder: (context) => const AddToDO()),
           );
         },
-        child: Icon(Icons.add),
+        child: const Icon(Icons.add),
       ),
     );
   }
