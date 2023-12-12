@@ -39,16 +39,15 @@ class _ReadToDoState extends State<ReadToDo> {
       var data = Hive.box('data');
       List<dynamic> values = data.values.toList();
       List<ToDo> allData = [];
-
       for (dynamic value in values) {
-        if (value != null) {
+        if (value != null && value['isfinish'] == false) {
           print("ID: ${value['id']}");
           print("Topic: ${value['topic']}");
+
           allData.add(ToDo(value['id'], value['topic'],
               bool.parse(value['isfinish'].toString())));
         }
       }
-
       return allData;
     } catch (error) {
       print("Error while accessing data: $error");
@@ -146,7 +145,7 @@ class _ReadToDoState extends State<ReadToDo> {
                   child: GestureDetector(
                     onLongPress: () {
                       print(todo.id);
-                      // _showDeleteDialog(todo.id);
+                      _showDeleteDialog(todo.id);
                     },
                     child: ListTile(
                       leading: Checkbox(
