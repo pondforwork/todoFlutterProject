@@ -16,7 +16,6 @@ class _ReadToDoState extends State<ReadToDo> {
 
   @override
   void initState() {
-    print("init");
     super.initState();
     initHive();
     _data = getData();
@@ -27,10 +26,8 @@ class _ReadToDoState extends State<ReadToDo> {
     try {
       await Hive.initFlutter(documentDirectory.path);
       await Hive.openBox('data');
-      print("Hive initialized successfully");
     } catch (error) {
       print("Hive initialization error: $error");
-      // Show error message to the user
     }
   }
 
@@ -66,6 +63,48 @@ class _ReadToDoState extends State<ReadToDo> {
     print('Data cleared successfully');
   }
 
+  // Method to delete the ToDo
+
+  Future<void> _showDeleteDialog(String id) async {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Delete ToDo'),
+          content: Text('Are you sure you want to delete this ToDo?'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                _deleteToDo(id); // Call the method to delete the ToDo
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: Text('Delete'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _deleteToDo(String id) async {
+    try {
+      var data = Hive.box('data');
+      await data.delete(id);
+      print('ToDo deleted successfully');
+      setState(() {
+        _data = getData();
+      });
+    } catch (error) {
+      print('Error deleting ToDo: $error');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -89,22 +128,27 @@ class _ReadToDoState extends State<ReadToDo> {
               print(snapshot.data.toString());
               List<Widget> cards = snapshot.data!.map((todo) {
                 return Card(
-                  child: ListTile(
-                    leading: Checkbox(
-                      value: todo.isfinish,
-                      onChanged: (bool? value) {
-                        setState(() {
-                          todo.isfinish = !todo.isfinish;
-                        });
-                      },
-                    ),
-                    title: Container(
-                      width: 300,
-                      height: 100,
-                      padding: const EdgeInsets.all(8.0),
-                      color: Colors.green,
-                      child: Center(
-                        child: Text(todo.topic),
+                  child: GestureDetector(
+                    onLongPress: () {
+                      _showDeleteDialog(todo.id);
+                    },
+                    child: ListTile(
+                      leading: Checkbox(
+                        value: todo.isfinish,
+                        onChanged: (bool? value) {
+                          setState(() {
+                            todo.isfinish = !todo.isfinish;
+                          });
+                        },
+                      ),
+                      title: Container(
+                        width: 300,
+                        height: 100,
+                        padding: const EdgeInsets.all(8.0),
+                        color: Colors.green,
+                        child: Center(
+                          child: Text(todo.topic),
+                        ),
                       ),
                     ),
                   ),

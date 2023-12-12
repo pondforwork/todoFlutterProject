@@ -5,7 +5,7 @@ class CircleColorButton extends StatelessWidget {
   final bool isSelected;
   final VoidCallback onPressed;
 
-  const CircleColorButton({
+  const CircleColorButton({super.key, 
     required this.color,
     required this.isSelected,
     required this.onPressed,

@@ -149,7 +149,7 @@ class _AddToDOState extends State<AddToDO> {
           String enteredText = topicController.text;
           print("Entered Text: $enteredText");
           ToDo todo = ToDo(id, enteredText, false);
-          // addData(todo.id, todo.topic, todo.isfinish);
+          addData(todo.id, todo.topic, todo.isfinish);
           print(selectedColor);
         },
         child: const Icon(Icons.add),
