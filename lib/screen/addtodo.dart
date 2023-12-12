@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:todoflutter/element/circlebutton.dart';
 import 'package:todoflutter/model/todo.dart';
 import 'package:uuid/uuid.dart';
 import 'package:path_provider/path_provider.dart';
@@ -34,39 +35,18 @@ class _AddToDOState extends State<AddToDO> {
 
   Future<List<ToDo>> getData() async {
     var data = Hive.box('data');
-    // Get the list of values
+
     List<dynamic> values = data.values.toList();
-    // Convert each value to a ToDo object
+
     List<ToDo> allData = [];
     for (dynamic value in values) {
-      // Check if value is not null to avoid errors if the box is empty
       if (value != null) {
-        // Access all properties of the value and print them
-        print("ID: ${value['id']}");
-        print("Topic: ${value['topic']}");
-        // Add the object to the list
         allData.add(ToDo(value['id'], value['topic'],
             bool.parse(value['isfinish'].toString())));
       }
     }
     return allData;
   }
-
-  // Future<List<ToDo>> getDataReturn() async {
-  //   var data = Hive.box('data');
-  //   List<ToDo> allData = [];
-  //   for (var key in data.keys) {
-  //     var todoData = data.get(key);
-  //     if (todoData != null) {
-  //       allData.add(
-  //           ToDo(todoData['id'].toString(), todoData['topic'], true, true));
-  //     }
-  //   }
-  //   allData.forEach((todo) => print(todo));
-
-  //   print(allData[0].toString());
-  //   return allData;
-  // }
 
   Future<void> clearData() async {
     var data = Hive.box('data');
@@ -87,8 +67,14 @@ class _AddToDOState extends State<AddToDO> {
     }
   }
 
-  var topicController = TextEditingController();
+  void selectColor(Color color) {
+    setState(() {
+      selectedColor = color;
+    });
+  }
 
+  var topicController = TextEditingController();
+  Color selectedColor = Colors.red; // Default color
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -116,77 +102,45 @@ class _AddToDOState extends State<AddToDO> {
               ),
             ),
           ),
-          ToggleButtons(
-            onPressed: (int index) {
-              setState(() {
-                selectedColorIndex = index;
-              });
-            },
-            isSelected:
-                List.generate(3, (index) => index == selectedColorIndex),
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: ClipOval(
-                  child: Material(
-                    color: Colors.red,
-                    borderRadius: BorderRadius.circular(1000),
-                    child: InkWell(
-                      onTap: () {
-                        setState(() {
-                          selectedColorIndex = 0;
-                        });
-                      },
-                      child: Container(
-                        width: 50,
-                        height: 50,
-                      ),
-                    ),
-                  ),
+          Padding(
+            padding: const EdgeInsets.all(15.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                CircleColorButton(
+                  color: Colors.red,
+                  isSelected: selectedColor == Colors.red,
+                  onPressed: () {
+                    selectColor(Colors.red);
+                  },
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: ClipOval(
-                  child: Material(
-                    color: Colors.green,
-                    borderRadius: BorderRadius.circular(1000),
-                    child: InkWell(
-                      onTap: () {
-                        setState(() {
-                          selectedColorIndex = 1;
-                        });
-                      },
-                      child: Container(
-                        width: 50,
-                        height: 50,
-                      ),
-                    ),
-                  ),
+                const SizedBox(width: 16),
+                CircleColorButton(
+                  color: Colors.green,
+                  isSelected: selectedColor == Colors.green,
+                  onPressed: () {
+                    selectColor(Colors.green);
+                  },
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: ClipOval(
-                  child: Material(
-                    color: Colors.lightGreen,
-                    borderRadius: BorderRadius.circular(1000),
-                    child: InkWell(
-                      onTap: () {
-                        setState(() {
-                          selectedColorIndex = 2; 
-                        });
-                      },
-                      child: Container(
-                        width: 50,
-                        height: 50,
-                      ),
-                    ),
-                  ),
+                const SizedBox(width: 16),
+                CircleColorButton(
+                  color: Colors.blue,
+                  isSelected: selectedColor == Colors.blue,
+                  onPressed: () {
+                    selectColor(Colors.blue);
+                  },
                 ),
-              ),
-            ],
-          ),
+                const SizedBox(width: 16),
+                CircleColorButton(
+                  color: Colors.yellow,
+                  isSelected: selectedColor == Colors.yellow,
+                  onPressed: () {
+                    selectColor(Colors.yellow);
+                  },
+                ),
+              ],
+            ),
+          )
         ],
       ),
       floatingActionButton: FloatingActionButton(
@@ -195,11 +149,8 @@ class _AddToDOState extends State<AddToDO> {
           String enteredText = topicController.text;
           print("Entered Text: $enteredText");
           ToDo todo = ToDo(id, enteredText, false);
-          addData(todo.id, todo.topic, todo.isfinish);
-          // getDataReturn();
-          // getDataById('ee068d29-d1f0-469d-8d57-0d0fecc9dfe2');
-          // getData();
-          // clearData();
+          // addData(todo.id, todo.topic, todo.isfinish);
+          print(selectedColor);
         },
         child: const Icon(Icons.add),
       ),
