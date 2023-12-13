@@ -1,24 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:todoflutter/database/dbhelper.dart';
 import 'package:todoflutter/model/todo.dart';
 import 'package:todoflutter/screen/addToDo.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 class ReadToDo extends StatefulWidget {
   const ReadToDo({Key? key}) : super(key: key);
-
   @override
   State<ReadToDo> createState() => _ReadToDoState();
 }
 
 class _ReadToDoState extends State<ReadToDo> {
   late Future<List<ToDo>> _data;
+  DbHelper dbHelper = DbHelper();
 
   @override
   void initState() {
     super.initState();
-    initHive();
-    _data = getData();
+    dbHelper.initHive();
+    // initHive();
+    _data = dbHelper.getData();
+    dbHelper.someFunction();
   }
 
   Future<void> initHive() async {
@@ -31,38 +34,32 @@ class _ReadToDoState extends State<ReadToDo> {
     }
   }
 
-  Future<List<ToDo>> getData() async {
-    try {
-      final documentDirectory = await getApplicationDocumentsDirectory();
-      await Hive.initFlutter(documentDirectory.path);
-      await Hive.openBox('data');
-      var data = Hive.box('data');
-      List<dynamic> values = data.values.toList();
-      List<ToDo> allData = [];
-      for (dynamic value in values) {
-        if (value != null && value['isfinish'] == false) {
-          print("ID: ${value['id']}");
-          print("Topic: ${value['topic']}");
-
-          allData.add(ToDo(value['id'], value['topic'],
-              bool.parse(value['isfinish'].toString())));
-        }
-      }
-      return allData;
-    } catch (error) {
-      print("Error while accessing data: $error");
-      // Show error message to the user
-      return [];
-    }
-  }
+  // Future<List<ToDo>> getData() async {
+  //   try {
+  //     final documentDirectory = await getApplicationDocumentsDirectory();
+  //     await Hive.initFlutter(documentDirectory.path);
+  //     await Hive.openBox('data');
+  //     var data = Hive.box('data');
+  //     List<dynamic> values = data.values.toList();
+  //     List<ToDo> allData = [];
+  //     for (dynamic value in values) {
+  //       if (value != null && value['isfinish'] == false) {
+  //                 allData.add(ToDo(value['id'], value['topic'],
+  //             bool.parse(value['isfinish'].toString())));
+  //       }
+  //     }
+  //     return allData;
+  //   } catch (error) {
+  //     print("Error while accessing data: $error");
+  //         return [];
+  //   }
+  // }
 
   Future<void> clearData() async {
     var data = Hive.box('data');
     await data.clear();
     print('Data cleared successfully');
   }
-
-  // Method to delete the ToDo
 
   Future<void> _showDeleteDialog(String id) async {
     return showDialog<void>(
@@ -80,8 +77,11 @@ class _ReadToDoState extends State<ReadToDo> {
             ),
             TextButton(
               onPressed: () {
-                _deleteToDo(id); // Call the method to delete the ToDo
+                dbHelper.deleteToDo(id);
                 Navigator.of(context).pop(); // Close the dialog
+                setState(() {
+                  _data = dbHelper.getData();
+                });
               },
               child: Text('Delete'),
             ),
@@ -91,22 +91,10 @@ class _ReadToDoState extends State<ReadToDo> {
     );
   }
 
-  void _deleteToDo(String id) async {
-    try {
-      var data = Hive.box('data');
-      await data.delete(id);
-      print('ToDo deleted successfully');
-      setState(() {
-        _data = getData();
-      });
-    } catch (error) {
-      print('Error deleting ToDo: $error');
-    }
-  }
+  
 
   Future<void> addOrUpdateData(String id, String topic, bool isfinish) async {
     var data = Hive.box('data');
-
     // Check if the ID already exists
     if (data.containsKey(id)) {
       // Update only the isfinish field
@@ -123,11 +111,13 @@ class _ReadToDoState extends State<ReadToDo> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("To Do",style: TextStyle(color: Colors.black),),
+        title: const Text(
+          "To Do",
+          style: TextStyle(color: Colors.black),
+        ),
         backgroundColor: Colors.yellow[600],
       ),
-        backgroundColor: Colors.yellow[200],
-
+      backgroundColor: Colors.yellow[200],
       body: Center(
         child: FutureBuilder<List<ToDo>>(
           future: _data,
@@ -154,8 +144,7 @@ class _ReadToDoState extends State<ReadToDo> {
                       },
                       child: ListTile(
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(
-                              10.0), // Replace 10.0 with your desired corner radius
+                          borderRadius: BorderRadius.circular(10.0),
                         ),
                         tileColor: Colors.white,
                         leading: Container(
@@ -167,11 +156,11 @@ class _ReadToDoState extends State<ReadToDo> {
                                 todo.isfinish = !todo.isfinish;
                               });
                               Future.delayed(Duration(seconds: 2), () {
-                                print("2Sec");
+                              
                                 setState(() {
                                   addOrUpdateData(
                                       todo.id, todo.topic, todo.isfinish);
-                                  _data = getData();
+                                  _data = dbHelper.getData();
                                 });
                               });
                             },
@@ -200,8 +189,6 @@ class _ReadToDoState extends State<ReadToDo> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // clearData();
-
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => const AddToDO()),
