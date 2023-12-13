@@ -19,46 +19,8 @@ class _ReadToDoState extends State<ReadToDo> {
   void initState() {
     super.initState();
     dbHelper.initHive();
-    // initHive();
     _data = dbHelper.getData();
     dbHelper.someFunction();
-  }
-
-  Future<void> initHive() async {
-    final documentDirectory = await getApplicationDocumentsDirectory();
-    try {
-      await Hive.initFlutter(documentDirectory.path);
-      await Hive.openBox('data');
-    } catch (error) {
-      print("Hive initialization error: $error");
-    }
-  }
-
-  // Future<List<ToDo>> getData() async {
-  //   try {
-  //     final documentDirectory = await getApplicationDocumentsDirectory();
-  //     await Hive.initFlutter(documentDirectory.path);
-  //     await Hive.openBox('data');
-  //     var data = Hive.box('data');
-  //     List<dynamic> values = data.values.toList();
-  //     List<ToDo> allData = [];
-  //     for (dynamic value in values) {
-  //       if (value != null && value['isfinish'] == false) {
-  //                 allData.add(ToDo(value['id'], value['topic'],
-  //             bool.parse(value['isfinish'].toString())));
-  //       }
-  //     }
-  //     return allData;
-  //   } catch (error) {
-  //     print("Error while accessing data: $error");
-  //         return [];
-  //   }
-  // }
-
-  Future<void> clearData() async {
-    var data = Hive.box('data');
-    await data.clear();
-    print('Data cleared successfully');
   }
 
   Future<void> _showDeleteDialog(String id) async {
@@ -67,13 +29,13 @@ class _ReadToDoState extends State<ReadToDo> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text('Delete ToDo'),
-          content: Text('Are you sure you want to delete this ToDo?'),
+          content: const Text('Are you sure you want to delete this ToDo?'),
           actions: <Widget>[
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop(); // Close the dialog
               },
-              child: Text('Cancel'),
+              child: const Text('Cancel'),
             ),
             TextButton(
               onPressed: () {
@@ -83,15 +45,13 @@ class _ReadToDoState extends State<ReadToDo> {
                   _data = dbHelper.getData();
                 });
               },
-              child: Text('Delete'),
+              child: const Text('Delete'),
             ),
           ],
         );
       },
     );
   }
-
-  
 
   Future<void> addOrUpdateData(String id, String topic, bool isfinish) async {
     var data = Hive.box('data');
@@ -156,7 +116,6 @@ class _ReadToDoState extends State<ReadToDo> {
                                 todo.isfinish = !todo.isfinish;
                               });
                               Future.delayed(Duration(seconds: 2), () {
-                              
                                 setState(() {
                                   addOrUpdateData(
                                       todo.id, todo.topic, todo.isfinish);

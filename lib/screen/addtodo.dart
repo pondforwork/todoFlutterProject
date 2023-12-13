@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:todoflutter/database/dbhelper.dart';
 import 'package:todoflutter/element/circlebutton.dart';
 import 'package:todoflutter/model/todo.dart';
 import 'package:uuid/uuid.dart';
@@ -7,18 +8,19 @@ import 'package:path_provider/path_provider.dart';
 
 class AddToDO extends StatefulWidget {
   const AddToDO({super.key});
-
   @override
   State<AddToDO> createState() => _AddToDOState();
 }
 
 class _AddToDOState extends State<AddToDO> {
   late int selectedColorIndex = 0; // Track the selected color index
+  DbHelper dbHelper = DbHelper();
   // Hive.init(documentDirectory.path);
   @override
   void initState() {
     super.initState();
-    initHive();
+    dbHelper.initHive();
+    // initHive();
     // selectedColorIndex = 0;
   }
 
@@ -28,10 +30,10 @@ class _AddToDOState extends State<AddToDO> {
     await Hive.openBox('data');
   }
 
-  Future<void> addData(String id, String topic, bool isfinish) async {
-    var data = Hive.box('data');
-    data.put(id, {'id': id, 'topic': topic, 'isfinish': isfinish});
-  }
+  // Future<void> addData(String id, String topic, bool isfinish) async {
+  //   var data = Hive.box('data');
+  //   data.put(id, {'id': id, 'topic': topic, 'isfinish': isfinish});
+  // }
 
   Future<List<ToDo>> getData() async {
     var data = Hive.box('data');
@@ -54,18 +56,7 @@ class _AddToDOState extends State<AddToDO> {
     print('Data cleared successfully');
   }
 
-  Future<Map<String, dynamic>> getDataById(String id) async {
-    var data = Hive.box('data');
-    var todoData = data.get(id);
-
-    if (todoData != null) {
-      print('ToDo with ID $id: $todoData');
-      return {'id': id, ...todoData};
-    } else {
-      print('ToDo with ID $id not found');
-      return {}; // Return an empty map or handle it accordingly
-    }
-  }
+  
 
   void selectColor(Color color) {
     setState(() {
@@ -147,9 +138,8 @@ class _AddToDOState extends State<AddToDO> {
         onPressed: () {
           String id = const Uuid().v4();
           String enteredText = topicController.text;
-          print("Entered Text: $enteredText");
           ToDo todo = ToDo(id, enteredText, false);
-          addData(todo.id, todo.topic, todo.isfinish);
+          dbHelper.addData(todo.id, todo.topic, todo.isfinish);
           print(selectedColor);
         },
         child: const Icon(Icons.add),

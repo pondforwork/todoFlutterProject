@@ -53,4 +53,36 @@ class DbHelper {
       print('Error deleting ToDo: $error');
     }
   }
+
+  Future<void> addOrUpdateData(String id, String topic, bool isfinish) async {
+    var data = Hive.box('data');
+    // Check if the ID already exists
+    if (data.containsKey(id)) {
+      // Update only the isfinish field
+      data.put(id, {'id': id, 'topic': topic, 'isfinish': isfinish});
+      print('Data updated successfully for ID: $id');
+    } else {
+      // Add new data if the ID doesn't exist
+      data.put(id, {'id': id, 'topic': topic, 'isfinish': isfinish});
+      print('Data added successfully for ID: $id');
+    }
+  }
+
+  Future<void> addData(String id, String topic, bool isfinish) async {
+    var data = Hive.box('data');
+    data.put(id, {'id': id, 'topic': topic, 'isfinish': isfinish});
+  }
+
+  Future<Map<String, dynamic>> getDataById(String id) async {
+    var data = Hive.box('data');
+    var todoData = data.get(id);
+
+    if (todoData != null) {
+      print('ToDo with ID $id: $todoData');
+      return {'id': id, ...todoData};
+    } else {
+      print('ToDo with ID $id not found');
+      return {}; // Return an empty map or handle it accordingly
+    }
+  }
 }
