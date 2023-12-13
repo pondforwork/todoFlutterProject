@@ -70,73 +70,77 @@ class _AddToDOState extends State<AddToDO> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("To Do"),
+        title: const Text("Add To Do."),
       ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: Center(
-              child: Form(
-                child: TextFormField(
-                  controller: topicController,
-                  decoration: const InputDecoration(
-                    labelText: "What Things To Do ?",
+      body: Container(
+        color: Colors.yellow[200], // Set body background color
+
+        child: Column(
+          children: [SizedBox(height: 280,),
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Center(
+                child: Form(
+                  child: TextFormField(
+                    controller: topicController,
+                    decoration: const InputDecoration(
+                      labelText: "What Things To Do ?",
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please Enter Your To Do';
+                      }
+                      return null;
+                    },
                   ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please Enter Your To Do';
-                    }
-                    return null;
-                  },
                 ),
               ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(15.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                CircleColorButton(
-                  color: Colors.red,
-                  isSelected: selectedColor == Colors.red,
-                  onPressed: () {
-                    selectColor(Colors.red);
-                    colorString = 'red';
-                  },
-                ),
-                const SizedBox(width: 16),
-                CircleColorButton(
-                  color: Colors.green,
-                  isSelected: selectedColor == Colors.green,
-                  onPressed: () {
-                    selectColor(Colors.green);
-                    colorString = 'green';
-                  },
-                ),
-                const SizedBox(width: 16),
-                CircleColorButton(
-                  color: Colors.blue,
-                  isSelected: selectedColor == Colors.blue,
-                  onPressed: () {
-                    selectColor(Colors.blue);
-                    colorString = 'blue';
-                  },
-                ),
-                const SizedBox(width: 16),
-                CircleColorButton(
-                  color: Colors.yellow,
-                  isSelected: selectedColor == Colors.yellow,
-                  onPressed: () {
-                    selectColor(Colors.yellow);
-                    colorString = 'yellow';
-                  },
-                ),
-              ],
-            ),
-          )
-        ],
+            Padding(
+              padding: const EdgeInsets.all(15.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircleColorButton(
+                    color: Colors.red,
+                    isSelected: selectedColor == Colors.red,
+                    onPressed: () {
+                      selectColor(Colors.red);
+                      colorString = 'red';
+                    },
+                  ),
+                  const SizedBox(width: 16),
+                  CircleColorButton(
+                    color: Colors.green,
+                    isSelected: selectedColor == Colors.green,
+                    onPressed: () {
+                      selectColor(Colors.green);
+                      colorString = 'green';
+                    },
+                  ),
+                  const SizedBox(width: 16),
+                  CircleColorButton(
+                    color: Colors.blue,
+                    isSelected: selectedColor == Colors.blue,
+                    onPressed: () {
+                      selectColor(Colors.blue);
+                      colorString = 'blue';
+                    },
+                  ),
+                  const SizedBox(width: 16),
+                  CircleColorButton(
+                    color: Colors.yellow,
+                    isSelected: selectedColor == Colors.yellow,
+                    onPressed: () {
+                      selectColor(Colors.yellow);
+                      colorString = 'yellow';
+                    },
+                  ),
+                ],
+              ),
+            )
+          ],
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
@@ -150,7 +154,7 @@ class _AddToDOState extends State<AddToDO> {
             MaterialPageRoute(builder: (context) => ReadToDo()),
           );
         },
-        child: const Icon(Icons.add),
+        child: const Icon(Icons.save),
       ),
     );
   }

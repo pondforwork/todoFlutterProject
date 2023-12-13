@@ -6,6 +6,7 @@ import 'package:todoflutter/screen/addToDo.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 class ReadToDo extends StatefulWidget {
+  
   const ReadToDo({Key? key}) : super(key: key);
   @override
   State<ReadToDo> createState() => _ReadToDoState();
@@ -71,13 +72,13 @@ class _ReadToDoState extends State<ReadToDo> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      
       appBar: AppBar(
         actions: [
           IconButton(
-            icon: Icon(Icons.archive),
+            icon: const Icon(Icons.archive),
             onPressed: () {
               // Your button action goes here
-              print('Button pressed!');
               setState(() {
                 _data = dbHelper.getData();
               });
@@ -88,7 +89,7 @@ class _ReadToDoState extends State<ReadToDo> {
           "To Do",
           style: TextStyle(color: Colors.black),
         ),
-        backgroundColor: Colors.yellow[600],
+        // backgroundColor: Colors.yellow[600],
       ),
       backgroundColor: Colors.yellow[200],
       body: SingleChildScrollView(

@@ -11,6 +11,13 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(home: ReadToDo());
+    return  MaterialApp(
+      theme: ThemeData(
+        // Customize your theme here
+        primarySwatch: Colors.yellow,
+       
+        // Add more theme configurations as needed
+      ),
+      home: ReadToDo());
   }
 }
