@@ -97,6 +97,13 @@ class _ReadToDoState extends State<ReadToDo> {
                 return Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Card(
+                    shape: RoundedRectangleBorder(
+                      borderRadius:
+                          BorderRadius.circular(10.0), // Set the border radius
+                      side: const BorderSide(
+                          color: Colors.yellow,
+                          width: 3), // Set the border color and width
+                    ),
                     child: GestureDetector(
                       onLongPress: () {
                         print(todo.id);
@@ -106,37 +113,36 @@ class _ReadToDoState extends State<ReadToDo> {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10.0),
                         ),
-                        tileColor: Colors.blue,
-                        leading: Container(
-                          decoration: BoxDecoration(
-                              border: Border.all(
-                                color: Colors.black, // Set the border color
-                                width: 1.0, // Set the border width
-                              ),
-                              color: Color.fromARGB(255, 255, 255, 255),
-                              shape: BoxShape.rectangle),
-                          width: 30.0,
-                          height: 30.0,
-                          // color: Colors.white,
-                          child: Checkbox(
-                            value: todo.isfinish,
-                            onChanged: (bool? value) {
-                              setState(() {
-                                todo.isfinish = !todo.isfinish;
-                              });
-                              Future.delayed(Duration(seconds: 2), () {
-                                setState(() {
-                                  addOrUpdateData(
-                                      todo.id, todo.topic, todo.isfinish);
-                                  _data = dbHelper.getData();
-                                });
-                              });
-                            },
+                        tileColor: Colors.white,
+                        leading: Checkbox(
+                          activeColor: const Color.fromARGB(255, 182, 0,
+                              0), // Set the color of the check mark when checked
+                          checkColor: const Color.fromARGB(
+                              255, 8, 7, 7), // Set the color of the check mark
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(
+                                8.0), // Set the border radius of the checkbox box
+                            side: const BorderSide(
+                                color: Color.fromARGB(255, 9, 80,
+                                    138)), // Set the border color and width
                           ),
+                          value: todo.isfinish,
+                          onChanged: (bool? value) {
+                            setState(() {
+                              todo.isfinish = !todo.isfinish;
+                            });
+                            Future.delayed(Duration(seconds: 2), () {
+                              setState(() {
+                                addOrUpdateData(
+                                    todo.id, todo.topic, todo.isfinish);
+                                _data = dbHelper.getData();
+                              });
+                            });
+                          },
                         ),
                         title: Container(
                           width: 300,
-                          height: 70,
+                          height: 50,
                           padding: const EdgeInsets.all(8.0),
                           child: Center(
                             child: Text(todo.topic),
