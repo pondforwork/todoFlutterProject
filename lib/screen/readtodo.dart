@@ -106,9 +106,11 @@ class _ReadToDoState extends State<ReadToDo> {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10.0),
                         ),
-                        tileColor: Colors.white,
+                        tileColor: Colors.blue,
                         leading: Container(
-                          color: Colors.white,
+                          decoration: BoxDecoration(
+                              color: Colors.white, shape: BoxShape.circle),
+                          // color: Colors.white,
                           child: Checkbox(
                             value: todo.isfinish,
                             onChanged: (bool? value) {
