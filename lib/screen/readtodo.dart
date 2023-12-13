@@ -109,7 +109,14 @@ class _ReadToDoState extends State<ReadToDo> {
                         tileColor: Colors.blue,
                         leading: Container(
                           decoration: BoxDecoration(
-                              color: Colors.white, shape: BoxShape.circle),
+                              border: Border.all(
+                                color: Colors.black, // Set the border color
+                                width: 1.0, // Set the border width
+                              ),
+                              color: Color.fromARGB(255, 255, 255, 255),
+                              shape: BoxShape.rectangle),
+                          width: 30.0,
+                          height: 30.0,
                           // color: Colors.white,
                           child: Checkbox(
                             value: todo.isfinish,
