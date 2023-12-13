@@ -21,7 +21,6 @@ class _ReadToDoState extends State<ReadToDo> {
     super.initState();
     dbHelper.initHive();
     _data = dbHelper.getData();
-
     dbHelper.someFunction();
   }
 
@@ -55,16 +54,46 @@ class _ReadToDoState extends State<ReadToDo> {
     );
   }
 
-  Future<void> addOrUpdateData(String id, String topic, bool isfinish) async {
+  Future<void> _showFinishDialog() async {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Move Finished ToDo to Archive.'),
+          content: const Text('Are you sure you finished things Up?'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child:  const Text('Cancel',style: TextStyle(color: Colors.black),),
+            ),
+            TextButton(
+              onPressed: () {
+            
+                Navigator.of(context).pop(); // Close the dialog
+                setState(() {
+                  _data = dbHelper.getData();
+                });
+              },
+              child: const Text('Ok',style: TextStyle(color: Colors.black),),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> addOrUpdateData(String id, String topic, bool isfinish,Color color) async {
     var data = Hive.box('data');
     // Check if the ID already exists
     if (data.containsKey(id)) {
       // Update only the isfinish field
-      data.put(id, {'id': id, 'topic': topic, 'isfinish': isfinish});
+      data.put(id, {'id': id, 'topic': topic, 'isfinish': isfinish,'color': color});
       print('Data updated successfully for ID: $id');
     } else {
       // Add new data if the ID doesn't exist
-      data.put(id, {'id': id, 'topic': topic, 'isfinish': isfinish});
+      data.put(id, {'id': id, 'topic': topic, 'isfinish': isfinish,'color': color});
       print('Data added successfully for ID: $id');
     }
   }
@@ -80,7 +109,16 @@ class _ReadToDoState extends State<ReadToDo> {
             onPressed: () {
               // Your button action goes here
               setState(() {
-                _data = dbHelper.getData();
+
+              });
+            },
+          ),IconButton(
+            icon: const Icon(Icons.check_box_rounded),
+            onPressed: () {
+              // Your button action goes here
+              setState(() {
+                _showFinishDialog();
+                // _data = dbHelper.getData();
               });
             },
           ),
@@ -148,7 +186,7 @@ class _ReadToDoState extends State<ReadToDo> {
                               Future.delayed(Duration(seconds: 2), () {
                                 setState(() {
                                   addOrUpdateData(
-                                      todo.id, todo.topic, todo.isfinish);
+                                      todo.id, todo.topic, todo.isfinish,todo.color);
                                   // _data = dbHelper.getData();
                                 });
                               });
