@@ -44,7 +44,7 @@ class _AddToDOState extends State<AddToDO> {
     for (dynamic value in values) {
       if (value != null) {
         allData.add(ToDo(value['id'], value['topic'],
-            bool.parse(value['isfinish'].toString())));
+            bool.parse(value['isfinish'].toString()), value['color']));
       }
     }
     return allData;
@@ -56,8 +56,6 @@ class _AddToDOState extends State<AddToDO> {
     print('Data cleared successfully');
   }
 
-  
-
   void selectColor(Color color) {
     setState(() {
       selectedColor = color;
@@ -66,6 +64,7 @@ class _AddToDOState extends State<AddToDO> {
 
   var topicController = TextEditingController();
   Color selectedColor = Colors.red; // Default color
+  String colorString = "";
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -103,6 +102,7 @@ class _AddToDOState extends State<AddToDO> {
                   isSelected: selectedColor == Colors.red,
                   onPressed: () {
                     selectColor(Colors.red);
+                    colorString = 'red';
                   },
                 ),
                 const SizedBox(width: 16),
@@ -111,6 +111,7 @@ class _AddToDOState extends State<AddToDO> {
                   isSelected: selectedColor == Colors.green,
                   onPressed: () {
                     selectColor(Colors.green);
+                    colorString = 'green';
                   },
                 ),
                 const SizedBox(width: 16),
@@ -119,6 +120,7 @@ class _AddToDOState extends State<AddToDO> {
                   isSelected: selectedColor == Colors.blue,
                   onPressed: () {
                     selectColor(Colors.blue);
+                    colorString = 'blue';
                   },
                 ),
                 const SizedBox(width: 16),
@@ -127,6 +129,7 @@ class _AddToDOState extends State<AddToDO> {
                   isSelected: selectedColor == Colors.yellow,
                   onPressed: () {
                     selectColor(Colors.yellow);
+                    colorString = 'yellow';
                   },
                 ),
               ],
@@ -138,8 +141,9 @@ class _AddToDOState extends State<AddToDO> {
         onPressed: () {
           String id = const Uuid().v4();
           String enteredText = topicController.text;
-          ToDo todo = ToDo(id, enteredText, false);
-          dbHelper.addData(todo.id, todo.topic, todo.isfinish);
+          ToDo todo = ToDo(id, enteredText, false, selectedColor);
+          dbHelper.addData(todo.id, todo.topic, todo.isfinish,todo.color);
+          print("Color - ");
           print(selectedColor);
         },
         child: const Icon(Icons.add),

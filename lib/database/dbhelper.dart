@@ -1,3 +1,6 @@
+import 'dart:ui';
+
+import 'package:hive_flutter/adapters.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:todoflutter/model/todo.dart';
@@ -7,7 +10,9 @@ class DbHelper {
     final documentDirectory = await getApplicationDocumentsDirectory();
     try {
       await Hive.initFlutter(documentDirectory.path);
+      Hive.registerAdapter(ColorAdapter());
       await Hive.openBox('data');
+      // await clearData();
     } catch (error) {
       print("Hive initialization error: $error");
     }
@@ -28,7 +33,7 @@ class DbHelper {
       for (dynamic value in values) {
         if (value != null && value['isfinish'] == false) {
           allData.add(ToDo(value['id'], value['topic'],
-              bool.parse(value['isfinish'].toString())));
+              bool.parse(value['isfinish'].toString()), value['color']));
         }
       }
       return allData;
@@ -68,9 +73,11 @@ class DbHelper {
     }
   }
 
-  Future<void> addData(String id, String topic, bool isfinish) async {
+  Future<void> addData(
+      String id, String topic, bool isfinish, Color color) async {
     var data = Hive.box('data');
-    data.put(id, {'id': id, 'topic': topic, 'isfinish': isfinish});
+    data.put(
+        id, {'id': id, 'topic': topic, 'isfinish': isfinish, 'color': color});
   }
 
   Future<Map<String, dynamic>> getDataById(String id) async {

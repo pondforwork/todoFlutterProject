@@ -20,6 +20,7 @@ class _ReadToDoState extends State<ReadToDo> {
     super.initState();
     dbHelper.initHive();
     _data = dbHelper.getData();
+
     dbHelper.someFunction();
   }
 
@@ -93,6 +94,7 @@ class _ReadToDoState extends State<ReadToDo> {
               );
             } else {
               print(snapshot.data.toString());
+
               List<Widget> cards = snapshot.data!.map((todo) {
                 return Padding(
                   padding: const EdgeInsets.all(8.0),
@@ -100,8 +102,8 @@ class _ReadToDoState extends State<ReadToDo> {
                     shape: RoundedRectangleBorder(
                       borderRadius:
                           BorderRadius.circular(10.0), // Set the border radius
-                      side: const BorderSide(
-                          color: Colors.yellow,
+                      side: BorderSide(
+                          color: todo.color, // i need to apply my col here
                           width: 3), // Set the border color and width
                     ),
                     child: GestureDetector(
