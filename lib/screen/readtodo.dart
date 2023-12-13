@@ -79,88 +79,89 @@ class _ReadToDoState extends State<ReadToDo> {
         backgroundColor: Colors.yellow[600],
       ),
       backgroundColor: Colors.yellow[200],
-      body: Center(
-        child: FutureBuilder<List<ToDo>>(
-          future: _data,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const CircularProgressIndicator();
-            } else if (snapshot.hasError) {
-              return Text('Error: ${snapshot.error}');
-            } else if (snapshot.data?.length == 0) {
-              print("null");
-              return const Center(
-                child: Text("There's No ToDo Here"),
-              );
-            } else {
-              print(snapshot.data.toString());
-
-              List<Widget> cards = snapshot.data!.map((todo) {
-                return Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Card(
-                    shape: RoundedRectangleBorder(
-                      borderRadius:
-                          BorderRadius.circular(10.0), // Set the border radius
-                      side: BorderSide(
-                          color: todo.color, // i need to apply my col here
-                          width: 3), // Set the border color and width
-                    ),
-                    child: GestureDetector(
-                      onLongPress: () {
-                        print(todo.id);
-                        _showDeleteDialog(todo.id);
-                      },
-                      child: ListTile(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                        ),
-                        tileColor: Colors.white,
-                        leading: Checkbox(
-                          activeColor: const Color.fromARGB(255, 182, 0,
-                              0), // Set the color of the check mark when checked
-                          checkColor: const Color.fromARGB(
-                              255, 8, 7, 7), // Set the color of the check mark
+      body: SingleChildScrollView(
+        child: Center(
+          child: FutureBuilder<List<ToDo>>(
+            future: _data,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const CircularProgressIndicator();
+              } else if (snapshot.hasError) {
+                return Text('Error: ${snapshot.error}');
+              } else if (snapshot.data?.length == 0) {
+                print("null");
+                return const Center(
+                  child: Text("There's No ToDo Here"),
+                );
+              } else {
+      
+                List<Widget> cards = snapshot.data!.map((todo) {
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Card(
+                      shape: RoundedRectangleBorder(
+                        borderRadius:
+                            BorderRadius.circular(10.0), // Set the border radius
+                        side: BorderSide(
+                            color: todo.color, // i need to apply my col here
+                            width: 3), // Set the border color and width
+                      ),
+                      child: GestureDetector(
+                        onLongPress: () {
+                          print(todo.id);
+                          _showDeleteDialog(todo.id);
+                        },
+                        child: ListTile(
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(
-                                8.0), // Set the border radius of the checkbox box
-                            side: const BorderSide(
-                                color: Color.fromARGB(255, 9, 80,
-                                    138)), // Set the border color and width
+                            borderRadius: BorderRadius.circular(10.0),
                           ),
-                          value: todo.isfinish,
-                          onChanged: (bool? value) {
-                            setState(() {
-                              todo.isfinish = !todo.isfinish;
-                            });
-                            Future.delayed(Duration(seconds: 2), () {
+                          tileColor: Colors.white,
+                          leading: Checkbox(
+                            activeColor: const Color.fromARGB(255, 182, 0,
+                                0), // Set the color of the check mark when checked
+                            checkColor: const Color.fromARGB(
+                                255, 8, 7, 7), // Set the color of the check mark
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(
+                                  8.0), // Set the border radius of the checkbox box
+                              side: const BorderSide(
+                                  color: Color.fromARGB(255, 9, 80,
+                                      138)), // Set the border color and width
+                            ),
+                            value: todo.isfinish,
+                            onChanged: (bool? value) {
                               setState(() {
-                                addOrUpdateData(
-                                    todo.id, todo.topic, todo.isfinish);
-                                _data = dbHelper.getData();
+                                todo.isfinish = !todo.isfinish;
                               });
-                            });
-                          },
-                        ),
-                        title: Container(
-                          width: 300,
-                          height: 50,
-                          padding: const EdgeInsets.all(8.0),
-                          child: Center(
-                            child: Text(todo.topic),
+                              Future.delayed(Duration(seconds: 2), () {
+                                setState(() {
+                                  addOrUpdateData(
+                                      todo.id, todo.topic, todo.isfinish);
+                                  _data = dbHelper.getData();
+                                });
+                              });
+                            },
+                          ),
+                          title: Container(
+                            width: 300,
+                            height: 50,
+                            padding: const EdgeInsets.all(8.0),
+                            child: Center(
+                              child: Text(todo.topic),
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
+                  );
+                }).toList();
+      
+                return Column(
+                  children: cards,
                 );
-              }).toList();
-
-              return Column(
-                children: cards,
-              );
-            }
-          },
+              }
+            },
+          ),
         ),
       ),
       floatingActionButton: FloatingActionButton(

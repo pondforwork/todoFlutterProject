@@ -3,6 +3,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:todoflutter/database/dbhelper.dart';
 import 'package:todoflutter/element/circlebutton.dart';
 import 'package:todoflutter/model/todo.dart';
+import 'package:todoflutter/screen/readtodo.dart';
 import 'package:uuid/uuid.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -138,13 +139,16 @@ class _AddToDOState extends State<AddToDO> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
+        onPressed: () async {
           String id = const Uuid().v4();
           String enteredText = topicController.text;
           ToDo todo = ToDo(id, enteredText, false, selectedColor);
-          dbHelper.addData(todo.id, todo.topic, todo.isfinish,todo.color);
-          print("Color - ");
-          print(selectedColor);
+          dbHelper.addData(todo.id, todo.topic, todo.isfinish, todo.color);
+          Navigator.pop(context);
+          await Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => ReadToDo()),
+          );
         },
         child: const Icon(Icons.add),
       ),
