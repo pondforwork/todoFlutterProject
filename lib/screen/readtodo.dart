@@ -72,6 +72,18 @@ class _ReadToDoState extends State<ReadToDo> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        actions: [
+          IconButton(
+            icon: Icon(Icons.archive),
+            onPressed: () {
+              // Your button action goes here
+              print('Button pressed!');
+              setState(() {
+                _data = dbHelper.getData();
+              });
+            },
+          ),
+        ],
         title: const Text(
           "To Do",
           style: TextStyle(color: Colors.black),
@@ -94,14 +106,13 @@ class _ReadToDoState extends State<ReadToDo> {
                   child: Text("There's No ToDo Here"),
                 );
               } else {
-      
                 List<Widget> cards = snapshot.data!.map((todo) {
                   return Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Card(
                       shape: RoundedRectangleBorder(
-                        borderRadius:
-                            BorderRadius.circular(10.0), // Set the border radius
+                        borderRadius: BorderRadius.circular(
+                            10.0), // Set the border radius
                         side: BorderSide(
                             color: todo.color, // i need to apply my col here
                             width: 3), // Set the border color and width
@@ -119,8 +130,8 @@ class _ReadToDoState extends State<ReadToDo> {
                           leading: Checkbox(
                             activeColor: const Color.fromARGB(255, 182, 0,
                                 0), // Set the color of the check mark when checked
-                            checkColor: const Color.fromARGB(
-                                255, 8, 7, 7), // Set the color of the check mark
+                            checkColor: const Color.fromARGB(255, 8, 7,
+                                7), // Set the color of the check mark
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(
                                   8.0), // Set the border radius of the checkbox box
@@ -137,7 +148,7 @@ class _ReadToDoState extends State<ReadToDo> {
                                 setState(() {
                                   addOrUpdateData(
                                       todo.id, todo.topic, todo.isfinish);
-                                  _data = dbHelper.getData();
+                                  // _data = dbHelper.getData();
                                 });
                               });
                             },
@@ -155,7 +166,7 @@ class _ReadToDoState extends State<ReadToDo> {
                     ),
                   );
                 }).toList();
-      
+
                 return Column(
                   children: cards,
                 );
