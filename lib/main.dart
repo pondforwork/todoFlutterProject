@@ -14,7 +14,7 @@ class MainApp extends StatelessWidget {
     return  MaterialApp(
       theme: ThemeData(
         // Customize your theme here
-        primarySwatch: Colors.yellow,
+        primarySwatch: Colors.blue,
        
         // Add more theme configurations as needed
       ),

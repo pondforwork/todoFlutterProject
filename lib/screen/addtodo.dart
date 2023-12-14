@@ -73,7 +73,7 @@ class _AddToDOState extends State<AddToDO> {
         title: const Text("Add To Do."),
       ),
       body: Container(
-        color: Colors.yellow[200], // Set body background color
+        color: Colors.white, // Set body background color
 
         child: Column(
           children: [SizedBox(height: 280,),
