@@ -53,6 +53,37 @@ class DbHelper {
     }
   }
 
+  Future<List<ToDo>> getFinishedToDo() async {
+    try {
+      final documentDirectory = await getApplicationDocumentsDirectory();
+      await Hive.initFlutter(documentDirectory.path);
+      await Hive.openBox('data');
+      var data = Hive.box('data');
+      List<dynamic> values = data.values.toList();
+      List<ToDo> allData = [];
+
+      for (dynamic value in values) {
+        if (value != null && value['isfinish'] == true) {
+          allData.add(ToDo(
+            value['id'],
+            value['topic'],
+            bool.parse(value['isfinish'].toString()),
+            value['color'],
+            value['order'],
+          ));
+        }
+      }
+
+      // Sort the list by the "order" property
+      allData.sort((a, b) => a.order.compareTo(b.order));
+
+      return allData;
+    } catch (error) {
+      print("Error while accessing data: $error");
+      return [];
+    }
+  }
+
   Future<void> clearData() async {
     var data = Hive.box('data');
     await data.clear();
