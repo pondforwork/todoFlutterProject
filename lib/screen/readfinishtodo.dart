@@ -4,15 +4,14 @@ import 'package:todoflutter/database/dbhelper.dart';
 import 'package:todoflutter/model/todo.dart';
 import 'package:todoflutter/screen/addToDo.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:todoflutter/screen/readfinishtodo.dart';
 
-class ReadToDo extends StatefulWidget {
-  const ReadToDo({Key? key}) : super(key: key);
+class ReadFinishToDo extends StatefulWidget {
+  const ReadFinishToDo({Key? key}) : super(key: key);
   @override
-  State<ReadToDo> createState() => _ReadToDoState();
+  State<ReadFinishToDo> createState() => _ReadFinishToDoState();
 }
 
-class _ReadToDoState extends State<ReadToDo> {
+class _ReadFinishToDoState extends State<ReadFinishToDo> {
   late Future<List<ToDo>> _data;
   DbHelper dbHelper = DbHelper();
 
@@ -20,7 +19,7 @@ class _ReadToDoState extends State<ReadToDo> {
   void initState() {
     super.initState();
     dbHelper.initHive();
-    _data = dbHelper.getData();
+    _data = dbHelper.getFinishedToDo();
     dbHelper.someFunction();
   }
 
@@ -64,9 +63,7 @@ class _ReadToDoState extends State<ReadToDo> {
           actions: <Widget>[
             TextButton(
               onPressed: () {
-                setState(() {
-                  Navigator.of(context).pop(); // Close the dialog
-                });
+                Navigator.of(context).pop(); // Close the dialog
               },
               child: const Text(
                 'Cancel',
@@ -91,29 +88,19 @@ class _ReadToDoState extends State<ReadToDo> {
     );
   }
 
-  Future<void> addOrUpdateData(String id, String topic, bool isfinish,
-      Color color, DateTime order) async {
+  Future<void> addOrUpdateData(
+      String id, String topic, bool isfinish, Color color) async {
     var data = Hive.box('data');
     // Check if the ID already exists
     if (data.containsKey(id)) {
       // Update only the isfinish field
-      data.put(id, {
-        'id': id,
-        'topic': topic,
-        'isfinish': isfinish,
-        'color': color,
-        'order': order
-      });
+      data.put(
+          id, {'id': id, 'topic': topic, 'isfinish': isfinish, 'color': color});
       print('Data updated successfully for ID: $id');
     } else {
       // Add new data if the ID doesn't exist
-      data.put(id, {
-        'id': id,
-        'topic': topic,
-        'isfinish': isfinish,
-        'color': color,
-        'order': order
-      });
+      data.put(
+          id, {'id': id, 'topic': topic, 'isfinish': isfinish, 'color': color});
       print('Data added successfully for ID: $id');
     }
   }
@@ -122,27 +109,18 @@ class _ReadToDoState extends State<ReadToDo> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.archive),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const ReadFinishToDo()),
-              );
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.check_box_rounded),
-            onPressed: () {
-              // Your button action goes here
-              setState(() {
-                _showFinishDialog();
-                // _data = dbHelper.getData();
-              });
-            },
-          ),
-        ],
+        // actions: [
+        //   IconButton(
+        //     icon: const Icon(Icons.archive),
+        //     onPressed: () {
+        //       // Your button action goes here
+        //       setState(() {
+        //         dbHelper.clearData();
+        //         _data = dbHelper.getFinishedToDo();
+        //       });
+        //     },
+        //   ),
+        // ],
         title: const Text(
           "To Do",
           style: TextStyle(color: Colors.white),
@@ -160,12 +138,15 @@ class _ReadToDoState extends State<ReadToDo> {
               } else if (snapshot.hasError) {
                 return Text('Error: ${snapshot.error}');
               } else if (snapshot.data?.length == 0) {
-                return const Center(
+                print("null");
+                return Center(
                   child: Column(
                     children: [
-                      SizedBox(height: 320,),
-                      Text( 
-                        "No To Do.",
+                      SizedBox(
+                        height: 320,
+                      ),
+                      Text(
+                        "No Finished To Do.",
                         textAlign: TextAlign.center,
                       ),
                     ],
@@ -193,30 +174,6 @@ class _ReadToDoState extends State<ReadToDo> {
                             borderRadius: BorderRadius.circular(10.0),
                           ),
                           tileColor: todo.color,
-                          leading: Checkbox(
-                            activeColor: Colors
-                                .white, // Set the color of the check mark when checked
-                            checkColor: const Color.fromARGB(255, 8, 7,
-                                7), // Set the color of the check mark
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(
-                                  8.0), // Set the border radius of the checkbox box
-                              side: const BorderSide(
-                                  color: Color.fromARGB(255, 9, 80,
-                                      138)), // Set the border color and width
-                            ),
-                            value: todo.isfinish,
-                            onChanged: (bool? value) {
-                              setState(() {
-                                todo.isfinish = !todo.isfinish;
-                              });
-                              setState(() {
-                                addOrUpdateData(todo.id, todo.topic,
-                                    todo.isfinish, todo.color, todo.order);
-                                // _data = dbHelper.getData();
-                              });
-                            },
-                          ),
                           title: Container(
                             width: 300,
                             height: 50,
