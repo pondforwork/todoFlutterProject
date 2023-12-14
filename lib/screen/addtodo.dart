@@ -16,11 +16,16 @@ class AddToDO extends StatefulWidget {
 class _AddToDOState extends State<AddToDO> {
   late int selectedColorIndex = 0; // Track the selected color index
   DbHelper dbHelper = DbHelper();
+  late FocusNode _focusNode;
+
   // Hive.init(documentDirectory.path);
   @override
   void initState() {
     super.initState();
     dbHelper.initHive();
+    _focusNode = FocusNode();
+      _focusNode.requestFocus(); // Request focus here
+
     // initHive();
     // selectedColorIndex = 0;
   }
@@ -44,8 +49,12 @@ class _AddToDOState extends State<AddToDO> {
     List<ToDo> allData = [];
     for (dynamic value in values) {
       if (value != null) {
-        allData.add(ToDo(value['id'], value['topic'],
-            bool.parse(value['isfinish'].toString()), value['color'],value['order']));
+        allData.add(ToDo(
+            value['id'],
+            value['topic'],
+            bool.parse(value['isfinish'].toString()),
+            value['color'],
+            value['order']));
       }
     }
     return allData;
@@ -76,13 +85,17 @@ class _AddToDOState extends State<AddToDO> {
         color: Colors.white, // Set body background color
 
         child: Column(
-          children: [SizedBox(height: 280,),
+          children: [
+            SizedBox(
+              height: 240,
+            ),
             Padding(
               padding: const EdgeInsets.all(10.0),
               child: Center(
                 child: Form(
                   child: TextFormField(
                     controller: topicController,
+                    focusNode: _focusNode, // Add this line
                     decoration: const InputDecoration(
                       labelText: "What Things To Do ?",
                     ),
@@ -146,8 +159,10 @@ class _AddToDOState extends State<AddToDO> {
         onPressed: () async {
           String id = const Uuid().v4();
           String enteredText = topicController.text;
-          ToDo todo = ToDo(id, enteredText, false, selectedColor,DateTime.now());
-          dbHelper.addData(todo.id, todo.topic, todo.isfinish, todo.color,todo.order);
+          ToDo todo =
+              ToDo(id, enteredText, false, selectedColor, DateTime.now());
+          dbHelper.addData(
+              todo.id, todo.topic, todo.isfinish, todo.color, todo.order);
           Navigator.pop(context);
           await Navigator.pushReplacement(
             context,
