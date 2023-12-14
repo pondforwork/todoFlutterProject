@@ -30,12 +30,22 @@ class DbHelper {
       var data = Hive.box('data');
       List<dynamic> values = data.values.toList();
       List<ToDo> allData = [];
+
       for (dynamic value in values) {
         if (value != null && value['isfinish'] == false) {
-          allData.add(ToDo(value['id'], value['topic'],
-              bool.parse(value['isfinish'].toString()), value['color']));
+          allData.add(ToDo(
+            value['id'],
+            value['topic'],
+            bool.parse(value['isfinish'].toString()),
+            value['color'],
+            value['order'],
+          ));
         }
       }
+
+      // Sort the list by the "order" property
+      allData.sort((a, b) => a.order.compareTo(b.order));
+
       return allData;
     } catch (error) {
       print("Error while accessing data: $error");
@@ -59,25 +69,33 @@ class DbHelper {
     }
   }
 
-  Future<void> addOrUpdateData(String id, String topic, bool isfinish) async {
+  Future<void> addOrUpdateData(
+      String id, String topic, bool isfinish, DateTime order) async {
     var data = Hive.box('data');
     // Check if the ID already exists
     if (data.containsKey(id)) {
       // Update only the isfinish field
-      data.put(id, {'id': id, 'topic': topic, 'isfinish': isfinish});
+      data.put(
+          id, {'id': id, 'topic': topic, 'isfinish': isfinish, 'order': order});
       print('Data updated successfully for ID: $id');
     } else {
       // Add new data if the ID doesn't exist
-      data.put(id, {'id': id, 'topic': topic, 'isfinish': isfinish});
+      data.put(
+          id, {'id': id, 'topic': topic, 'isfinish': isfinish, 'order': order});
       print('Data added successfully for ID: $id');
     }
   }
 
-  Future<void> addData(
-      String id, String topic, bool isfinish, Color color) async {
+  Future<void> addData(String id, String topic, bool isfinish, Color color,
+      DateTime order) async {
     var data = Hive.box('data');
-    data.put(
-        id, {'id': id, 'topic': topic, 'isfinish': isfinish, 'color': color});
+    data.put(id, {
+      'id': id,
+      'topic': topic,
+      'isfinish': isfinish,
+      'color': color,
+      'order': order
+    });
   }
 
   Future<Map<String, dynamic>> getDataById(String id) async {

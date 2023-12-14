@@ -45,7 +45,7 @@ class _AddToDOState extends State<AddToDO> {
     for (dynamic value in values) {
       if (value != null) {
         allData.add(ToDo(value['id'], value['topic'],
-            bool.parse(value['isfinish'].toString()), value['color']));
+            bool.parse(value['isfinish'].toString()), value['color'],value['order']));
       }
     }
     return allData;
@@ -146,8 +146,8 @@ class _AddToDOState extends State<AddToDO> {
         onPressed: () async {
           String id = const Uuid().v4();
           String enteredText = topicController.text;
-          ToDo todo = ToDo(id, enteredText, false, selectedColor);
-          dbHelper.addData(todo.id, todo.topic, todo.isfinish, todo.color);
+          ToDo todo = ToDo(id, enteredText, false, selectedColor,DateTime.now());
+          dbHelper.addData(todo.id, todo.topic, todo.isfinish, todo.color,todo.order);
           Navigator.pop(context);
           await Navigator.pushReplacement(
             context,

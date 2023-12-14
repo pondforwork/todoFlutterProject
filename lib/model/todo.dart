@@ -7,6 +7,7 @@ class ToDo {
   late String topic;
   late bool isfinish;
   late Color color;
+  late DateTime order;
 
-  ToDo(this.id,this.topic,this.isfinish,this.color);
+  ToDo(this.id,this.topic,this.isfinish,this.color,this.order);
 }
